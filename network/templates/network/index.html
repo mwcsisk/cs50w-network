@@ -2,8 +2,7 @@
 
 {% block body %}
     <h1>All Posts</h1>
-    <form method="POST" id="new-post" class="post-box new-post-box">
-        {% csrf_token %}
+    <form id="new-post" class="post-box new-post-box">
         <div class="form-group">
             <label for="new-post-body" class="new-post-help-text">New Post</label>
             <textarea id="new-post-body" class="form-control" rows="3"></textarea>

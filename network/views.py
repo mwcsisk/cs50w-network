@@ -1,10 +1,13 @@
+import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
@@ -61,3 +64,31 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+@csrf_exempt
+@login_required
+def post(request):
+    # API for new posts so we can post without user leaving the page
+
+    # Make sure we got this as a POST request
+    if request.method != "POST":
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+    # Make sure the post isn't empty or above character count
+    data = json.loads(request.body)
+    if len(data["body"]) <= 0:
+        return JsonResponse({"error": "The body of the new post is empty."}, status=400)
+    elif len(data["body"]) > 250:
+        return JsonResponse({"error": "Post exceeds 250 characters."}, status=400)
+    
+    # Process post
+    post = Post(author=request.user, body=data["body"])
+    post.save()
+
+    # Return the newly-created post so it can be added to the view
+    return JsonResponse({
+        "author": post.author.username,
+        "body": post.body,
+        "timestamp": post.timestamp,
+        "likes": post.likes.all().count()
+    })
