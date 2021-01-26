@@ -1,14 +1,37 @@
 {% extends "network/layout.html" %}
+{% load tz %}
 
 {% block body %}
     <h1>All Posts</h1>
     {% if request.user.is_authenticated %}
     <form id="new-post" class="post-box new-post-box">
         <div class="form-group">
-            <label for="new-post-body" class="new-post-help-text">New Post</label>
+            <label for="new-post-body" class="new-post-heading">New Post</label>
             <textarea id="new-post-body" class="form-control" rows="3"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
     </form>
     {% endif %}
+
+    {% for post in posts %}
+    <div class="post-box">
+        <div class="row justify-content-between">
+            <div class="col-md-auto author">{{ post.author.username }}</div>
+            <div class="col-md-auto edit-link">
+                {% if request.user == post.author %}
+                Edit
+                {% endif %}
+            </div>
+        </div>
+        <div class="body">
+            {{ post.body }}
+        </div>
+        <div class="timestamp">
+            {{ post.timestamp|timezone:"America/Los_Angeles" }}
+        </div>
+        <div class="likes">
+            Likes: {{ post.num_likes }}
+        </div>
+    </div>
+    {% endfor %}
 {% endblock %}

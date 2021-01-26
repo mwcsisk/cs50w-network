@@ -2,6 +2,7 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
+from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -11,7 +12,11 @@ from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    posts = Post.posts.all().annotate(num_likes=Count('likes')).order_by('-timestamp')
+
+    return render(request, "network/index.html", {
+        "posts": posts
+    })
 
 
 def login_view(request):
