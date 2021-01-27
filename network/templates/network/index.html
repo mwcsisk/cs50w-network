@@ -4,10 +4,11 @@
 {% block body %}
     <h1>All Posts</h1>
     {% if request.user.is_authenticated %}
-    <form id="new-post" class="post-box new-post-box">
-        <div class="form-group">
+    <form id="new-post" class="post-box new-post-box needs-validation" novalidate>
+        <div class="form-group" id="new-post-group">
             <label for="new-post-body" class="new-post-heading">New Post</label>
             <textarea id="new-post-body" class="form-control" rows="3"></textarea>
+            <div id="new-post-feedback" class="valid-feedback"></div>
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
     </form>

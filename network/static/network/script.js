@@ -3,19 +3,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add post functionality
     document.querySelector('#new-post').onsubmit = () => {
 
+        // Set up elements we need
+        const body = document.getElementById('new-post-body');
+        const message = document.getElementById('new-post-feedback');
+        const form = document.getElementById('new-post');
+        
         // Add post to database
         fetch('/api/post', {
             method: 'POST',
             body: JSON.stringify({
-                body: document.querySelector('#new-post-body').value
+                body: body.value
             })
         })
         .then(response => response.json())
         .then(result => {
             console.log(result);
+            
+            // Check for errors
+            if (result.error) {
+                body.classList.add('is-invalid');
+                
+                message.className = 'invalid-feedback';
+                message.innerHTML = result.error;
+                
+                return false;
+            }
+            
+            form.classList.add('was-validated');
+            // Display success message to user
+            body.classList.remove('is-invalid');
+            body.classList.add('is-valid');
+            message.className='valid-feedback';
+            message.innerHTML = 'Post successfully created!';
 
             // Add new post to posts view
-            let newPost = document.createElement('div');
+            const newPost = document.createElement('div');
             newPost.className = 'post-box';
             newPost.innerHTML = `
             <div class="row justify-content-between">
@@ -36,8 +58,15 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             const view = document.querySelector("#posts-view");
             view.insertAdjacentElement('afterbegin', newPost);
+            document.getElementById('new-post-body').value = '';
         })
 
         return false;
     }
+
+    // Remove validation messages when user writes a second post
+    document.getElementById('new-post-body').addEventListener('keydown', function() {
+        const form = getElementById('new-post');
+        form.classList.remove('was-validated');
+    })
 });
