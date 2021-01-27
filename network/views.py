@@ -79,6 +79,10 @@ def post(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     
+    # Also make sure the user is actually logged in
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User is not logged in."}, status=400)
+    
     # Make sure the post isn't empty or above character count
     data = json.loads(request.body)
     if len(data["body"]) <= 0:
@@ -91,9 +95,4 @@ def post(request):
     post.save()
 
     # Return the newly-created post so it can be added to the view
-    return JsonResponse({
-        "author": post.author.username,
-        "body": post.body,
-        "timestamp": post.timestamp,
-        "likes": post.likes.all().count()
-    })
+    return JsonResponse(post.serialize())

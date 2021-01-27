@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from pytz import timezone
 
 
 class User(AbstractUser):
@@ -12,3 +13,15 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name="liked")
 
     posts = models.Manager()
+
+    def serialize(self):
+        usw_tz = timezone('America/Los_Angeles')
+        timestamp = self.timestamp.astimezone(usw_tz)
+
+        return {
+            "id": self.id,
+            "author": self.author.username,
+            "body": self.body,
+            "timestamp": timestamp.strftime("%b. %#d, %Y, %#I:%M %p"),
+            "num_likes": self.likes.all().count()
+        }
