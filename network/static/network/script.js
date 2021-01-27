@@ -63,10 +63,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return false;
     }
-
-    // Remove validation messages when user writes a second post
-    document.getElementById('new-post-body').addEventListener('keydown', function() {
-        const form = getElementById('new-post');
-        form.classList.remove('was-validated');
-    })
 });
