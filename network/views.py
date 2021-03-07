@@ -2,17 +2,17 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
+from .functions import get_posts
 
 
 def index(request):
-    posts = Post.posts.all().annotate(num_likes=Count('likes')).order_by('-timestamp')
+    posts = get_posts()
 
     return render(request, "network/index.html", {
         "posts": posts
@@ -105,5 +105,5 @@ def profile(request, username):
         "username": username,
         "following": 0, # TODO
         "followers": 0, # TODO
-        "posts": user.posts.all()
+        "posts": get_posts(username=username)
     })
