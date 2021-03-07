@@ -96,3 +96,14 @@ def post(request):
 
     # Return the newly-created post so it can be added to the view
     return JsonResponse(post.serialize())
+
+def profile(request, username):
+    # Render a given user profile
+    user = User.objects.get(username=username)
+
+    return render(request, "network/profile.html", {
+        "username": username,
+        "following": 0, # TODO
+        "followers": 0, # TODO
+        "posts": user.posts.all()
+    })
