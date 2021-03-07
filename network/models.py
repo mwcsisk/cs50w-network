@@ -4,7 +4,7 @@ from pytz import timezone
 
 
 class User(AbstractUser):
-    pass
+    following = models.ManyToManyField('self', related_name="followers", symmetrical=False)
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', editable=False)
