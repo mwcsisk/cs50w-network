@@ -4,7 +4,7 @@ from pytz import timezone
 
 
 class User(AbstractUser):
-    users = models.Manager()
+    pass
 
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts', editable=False)
