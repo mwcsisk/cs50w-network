@@ -1,0 +1,31 @@
+{% extends "network/layout.html" %}
+{% load tz %}
+
+{% block body %}
+    {% block heading %}
+    {% endblock %}
+
+    <div id="posts-view">
+        {% for post in posts %}
+        <div class="post-box">
+            <div class="row justify-content-between">
+                <div class="col-md-auto author">{{ post.author.username }}</div>
+                <div class="col-md-auto edit-link">
+                    {% if request.user == post.author %}
+                    Edit
+                    {% endif %}
+                </div>
+            </div>
+            <div class="body">
+                {{ post.body }}
+            </div>
+            <div class="timestamp">
+                {{ post.timestamp|timezone:"America/Los_Angeles" }}
+            </div>
+            <div class="likes">
+                Likes: {{ post.num_likes }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
