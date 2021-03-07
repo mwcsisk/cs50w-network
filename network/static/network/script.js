@@ -37,30 +37,38 @@ document.addEventListener('DOMContentLoaded', function() {
             message.innerHTML = 'Post successfully created!';
 
             // Add new post to posts view
-            const newPost = document.createElement('div');
-            newPost.className = 'post-box';
-            newPost.innerHTML = `
-            <div class="row justify-content-between">
-                <div class="col-md-auto author">${result.author}</div>
-                <div class="col-md-auto edit-link">
-                    Edit
-                </div>
-            </div>
-            <div class="body">
-                ${result.body}
-            </div>
-            <div class="timestamp">
-                ${result.timestamp}
-            </div>
-            <div class="likes">
-                Likes: ${result.num_likes}
-            </div>
-            `;
-            const view = document.querySelector("#posts-view");
-            view.insertAdjacentElement('afterbegin', newPost);
+            renderPost('afterbegin', result);
+
+            // Clear post form body
             document.getElementById('new-post-body').value = '';
         })
 
         return false;
     }
 });
+
+function renderPost(position, postData) {
+    // Function to render posts to the posts view
+    // Takes a positional argument and the data for the actual post
+    const newPost = document.createElement('div');
+    newPost.className = 'post-box';
+    newPost.innerHTML = `
+        <div class="row justify-content-between">
+            <div class="col-md-auto author">${postData.author}</div>
+            <div class="col-md-auto edit-link">
+                Edit
+            </div>
+        </div>
+        <div class="body">
+            ${postData.body}
+        </div>
+        <div class="timestamp">
+            ${postData.timestamp}
+        </div>
+        <div class="likes">
+            Likes: ${postData.num_likes}
+        </div>
+        `;
+    const view = document.querySelector("#posts-view");
+    view.insertAdjacentElement(position, newPost);
+}
