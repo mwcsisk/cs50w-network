@@ -54,7 +54,7 @@ function renderPost(position, postData) {
     newPost.className = 'post-box';
     newPost.innerHTML = `
         <div class="row justify-content-between">
-            <div class="col-md-auto author">${postData.author}</div>
+            <div class="col-md-auto author"><a href="/user/${postData.author}">${postData.author}</a></div>
             <div class="col-md-auto edit-link">
                 Edit
             </div>
