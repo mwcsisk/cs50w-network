@@ -112,3 +112,36 @@ def post(request):
 
     # Return the newly-created post so it can be added to the view
     return JsonResponse(post.serialize())
+
+@csrf_exempt
+@login_required
+def follow(request):
+    # API for follow/unfollow action
+
+    # Confirm PUT request
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required."}, status=400)
+    
+    # Confirm there's a logged-in user
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User is not logged in."}, status=400)
+    
+    # Get the body of the request
+    data = json.loads(request.body)
+    followee = User.objects.get(username=data["followee"])
+
+    if not followee:
+        return JsonResponse({"error": "User {} does not exist in the database".format(data["followee"])}, status=400)
+    
+    # Process the follow toggle
+    # We don't need to check if the follow already exists since .add() handles that for us
+    if data["action"] == "follow":
+        request.user.following.add(followee)
+    elif data["action"] == "unfollow":
+        request.user.following.remove(followee)
+    else:
+        return JsonResponse({"error": "Action must be either 'follow' or 'unfollow'"}, status=400)
+    
+    # Save our changes and return a 204 response
+    request.user.save()
+    return HttpResponse(status=204)

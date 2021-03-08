@@ -72,3 +72,15 @@ function renderPost(position, postData) {
     const view = document.querySelector("#posts-view");
     view.insertAdjacentElement(position, newPost);
 }
+
+function updateFollowing(action, followee) {
+    // Function to update the "following" status for a user
+    // Takes an action (either 'follow' or 'unfollow') and the username being followed/unfollowed
+    fetch('/api/follow', {
+        method: 'PUT',
+        body: JSON.stringify({
+            action: action,
+            followee: followee
+        })
+    })
+}

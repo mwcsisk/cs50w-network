@@ -4,4 +4,7 @@
 <h1>{{ username }}'s Profile</h1>
 <h3>{{ following }} following</h3>
 <h3>{{ followers }} followers</h3>
+{% if request.user.username != username %}
+<button type="button" class="btn btn-primary" onclick="updateFollowing('follow', '{{ username }}')">Follow</button>
+{% endif %}
 {% endblock %}
