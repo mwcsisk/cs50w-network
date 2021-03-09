@@ -23,3 +23,8 @@
     font-size: 1.3rem;
     font-weight: 600;
 }
+
+.like-button {
+    border: none;
+    background: none;
+}
