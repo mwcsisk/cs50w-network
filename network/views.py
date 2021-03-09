@@ -8,25 +8,27 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
-from .functions import get_posts
+from .functions import get_posts, get_page_number
 
 
 # Page views
 
 def index(request):
     posts = get_posts()
+    page_no = get_page_number(request)
 
     return render(request, "network/index.html", {
-        "posts": posts
+        "posts": posts.page(page_no)
     })
 
 
 @login_required
 def following(request):
     posts = get_posts(users=request.user.following.all().values('id'))
+    page_no = get_page_number(request)
 
     return render(request, "network/following.html", {
-        "posts": posts
+        "posts": posts.page(page_no)
     })
 
 
@@ -81,6 +83,7 @@ def register(request):
     else:
         return render(request, "network/register.html")
 
+
 def profile(request, username):
     # Render a given user profile
     user = User.objects.get(username=username)
@@ -88,12 +91,15 @@ def profile(request, username):
         is_following = request.user.following.filter(id=user.id).exists()
     else:
         is_following = False
+    
+    posts = get_posts(username=username)
+    page_no = get_page_number(request)
 
     return render(request, "network/profile.html", {
         "username": username,
         "following": user.following.count(),
         "followers": user.followers.count(),
-        "posts": get_posts(username=username),
+        "posts": posts.page(page_no),
         "is_following": is_following
     })
 

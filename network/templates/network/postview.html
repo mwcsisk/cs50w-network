@@ -5,8 +5,31 @@
     {% block heading %}
     {% endblock %}
 
+    {% if posts.has_other_pages %}
+    <nav aria-label="Post navigation">
+        <ul class="pagination">
+            {% if posts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a></li>
+            {% endif %}
+            {% for page in posts.paginator.page_range %}
+            <li class="page-item {% if page == posts.number %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+            {% if posts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
     <div id="posts-view">
-        {% for post in posts %}
+        {% for post in posts.object_list %}
         <div class="post-box">
             <div class="row justify-content-between">
                 <div class="col-md-auto author">
@@ -32,4 +55,27 @@
         </div>
         {% endfor %}
     </div>
+    {% if posts.has_other_pages %}
+    <nav aria-label="Post navigation">
+        <ul class="pagination">
+            {% if posts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo;</a></li>
+            {% endif %}
+            {% for page in posts.paginator.page_range %}
+            <li class="page-item {% if page == posts.number %}active{% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+            {% if posts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a></li>
+            {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">&raquo;</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 {% endblock %}
