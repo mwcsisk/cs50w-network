@@ -30,7 +30,7 @@
     {% endif %}
     <div id="posts-view">
         {% for post in posts.object_list %}
-        <div class="post-box">
+        <div class="post-box" id="post-{{ post.id }}">
             <div class="row justify-content-between">
                 <div class="col-md-auto author">
                     <a href="/user/{{ post.author.username }}">
@@ -39,11 +39,11 @@
                 </div>
                 <div class="col-md-auto edit-link">
                     {% if request.user == post.author %}
-                    Edit
+                    <button type="button" class="btn btn-primary btn-sm edit-button" value="{{ post.id }}" id="post-{{ post.id }}-edit-button">Edit</button>
                     {% endif %}
                 </div>
             </div>
-            <div class="body">
+            <div class="body" id="post-{{ post.id }}-body">
                 {{ post.body }}
             </div>
             <div class="timestamp">

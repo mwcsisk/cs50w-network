@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // Add post functionality
-    newPostButton = document.querySelector('#new-post')
+    let newPostForm = document.querySelector('#new-post');
 
-    if (newPostButton) {
-        newPostButton.onsubmit = () => {
+    if (newPostForm) {
+        newPostForm.onsubmit = () => {
 
             // Set up elements we need
             const body = document.getElementById('new-post-body');
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     };
 
-    followButton = document.querySelector('#follow-button')
+    let followButton = document.querySelector('#follow-button')
 
     if (followButton) {
         followerCount = document.querySelector('#follower-count');
@@ -60,18 +60,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateFollowing('follow', followButton.value)
                 .then(() => {
                     followButton.innerHTML = 'Unfollow';
-                    newCount = parseInt(followerCount.innerHTML) + 1;
+                    let newCount = parseInt(followerCount.innerHTML) + 1;
                     followerCount.innerHTML = newCount;
                 });
             } else {
                 updateFollowing('unfollow', followButton.value)
                 .then(() => {
                     followButton.innerHTML = 'Follow'
-                    newCount = parseInt(followerCount.innerHTML) - 1;
+                    let newCount = parseInt(followerCount.innerHTML) - 1;
                     followerCount.innerHTML = newCount;
                 });
             };
         };
+    };
+
+    let editButtons = document.querySelectorAll('.edit-button')
+
+    if (editButtons) {
+        editButtons.forEach(element => {
+            element.onclick = () => {
+                let postBox = document.querySelector(`#post-${element.value}-body`);
+                let postBody = postBox.innerHTML.trim();
+                postBox.innerHTML = '';
+                postBox.insertAdjacentElement('afterbegin', newEditForm(element.value, postBody));
+                element.disabled = true;
+            };
+        });
     };
 });
 
@@ -111,4 +125,38 @@ async function updateFollowing(action, followee) {
             followee: followee
         })
     });
+}
+
+function newEditForm(postId, postBody) {
+    // Function to generate HTML for an edit form
+    form = document.createElement('form');
+    form.innerHTML = `
+    <div class="form-group">
+        <textarea id="post-${postId}-edit-body" class="form-control" rows="3">${postBody}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>`;
+    form.onsubmit = () => {
+        const newPostBody = document.querySelector(`#post-${postId}-edit-body`)
+        fetch(`/api/post/edit`, {
+            method: 'POST',
+            body: JSON.stringify({
+                body: newPostBody.value,
+                post: postId
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.error) {
+                console.log(result.error)
+
+                return false;
+            }
+            document.querySelector(`#post-${postId}-body`).innerHTML = result.body;
+            document.querySelector(`#post-${postId}-edit-button`).disabled = false;
+
+        })
+        
+        return false;
+    }
+    return form;
 }

@@ -165,3 +165,26 @@ def follow(request):
     # Save our changes and return a 204 response
     request.user.save()
     return HttpResponse(status=204)
+
+
+@csrf_exempt
+@login_required
+def edit(request):
+    # API for editing a post
+
+    if request.method != "POST":
+        return JsonResponse({"error": "POST method required"})
+
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User must be logged in."})
+    
+    data = json.loads(request.body)
+    post = Post.posts.get(id=data["post"])
+
+    if request.user != post.author:
+        return JsonResponse({"error": "You can't edit someone else's post!"})
+
+    post.body = data["body"]
+    post.save()
+
+    return JsonResponse({"body": post.body})
