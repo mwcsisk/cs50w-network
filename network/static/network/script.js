@@ -93,6 +93,56 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
     };
+
+    // Like functionality
+    let likeButtons = document.querySelectorAll('.like-button')    // Grab all the like buttons
+
+    if (likeButtons) {
+        likeButtons.forEach(element => {
+            element.onclick = () => {
+                let postId = element.value;
+                let likeSRText = document.querySelector(`#post-${postId}-like-sr-text`)
+                let action = ''
+
+                if (likeSRText.innerHTML.trim() === 'Like') {
+                    action = 'like'
+                } else {
+                    action = 'unlike'
+                }
+
+                console.log(action)
+
+                fetch('/api/like', {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        post: postId,
+                        action: action
+                    })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.error) {
+                        console.log(result.error)
+                        return false;
+                    }
+
+                    let likeCount = document.querySelector(`#post-${postId}-num-likes`);
+                    let likeSVG = document.querySelector(`#post-${postId}-heart`);
+
+                    likeCount.innerHTML = result.likes;
+                    if (action === 'like') {
+                        likeSVG.className.baseVal = 'unlike-svg';
+                        likeSRText.innerHTML = 'Unlike';
+                    } else {
+                        likeSVG.className.baseVal = 'like-svg';
+                        likeSRText.innerHTML = 'Like';
+                    }
+                })
+
+                return false;
+            };
+        });
+    };
 });
 
 function renderPost(position, postData) {

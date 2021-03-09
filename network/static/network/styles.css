@@ -27,4 +27,12 @@
 .like-button {
     border: none;
     background: none;
+    fill: none;
+    stroke: black;
+    stroke-width: 2px;
+}
+
+.unlike-svg {
+    fill: red;
+    stroke: red;
 }

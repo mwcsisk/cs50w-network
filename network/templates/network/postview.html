@@ -51,9 +51,9 @@
                 {{ post.timestamp|timezone:"America/Los_Angeles" }}
             </div>
             <div class="likes">
-                <button class="like-button">
-                    <svg id="post-{{post.id}}-heart" class="like-button"
-                        stroke="black" stroke-width="2px" fill="none" width="24px"
+                <button class="like-button" value="{{ post.id }}">
+                    {% if post.liked %}
+                    <svg id="post-{{post.id}}-heart" class="unlike-svg" width="24px"
                         viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <path d="M 10,30
                             A 20,20 0,0,1 50,30
@@ -61,12 +61,21 @@
                             Q 90,60 50,90
                             Q 10,60 10,30 z"/>
                     </svg>
+                    <span class="sr-only" id="post-{{ post.id }}-like-sr-text">Unlike</span>
+                    {% else %}
+                    <svg id="post-{{post.id}}-heart" class="like-svg" width="24px"
+                        viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 10,30
+                            A 20,20 0,0,1 50,30
+                            A 20,20 0,0,1 90,30
+                            Q 90,60 50,90
+                            Q 10,60 10,30 z"/>
+                    </svg>
+                    <span class="sr-only" id="post-{{ post.id }}-like-sr-text">Like</span>
+                    {% endif %}
                 </button>
-                <span id="#post-{{ post.id }}-num-likes">{{ post.num_likes }}</span>
+                <span id="post-{{ post.id }}-num-likes">{{ post.num_likes }}</span>
             </div>
-            {% if post.liked %}
-            <span>You liked this post!</span>
-            {% endif %}
         </div>
         {% endfor %}
     </div>

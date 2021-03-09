@@ -174,10 +174,10 @@ def edit(request):
 
     # Check method and that user is logged in
     if request.method != "POST":
-        return JsonResponse({"error": "POST method required"})
+        return JsonResponse({"error": "POST method required"}, status=400)
 
     if not request.user.is_authenticated:
-        return JsonResponse({"error": "User must be logged in."})
+        return JsonResponse({"error": "User must be logged in."}, status=400)
     
     # Get the post we're editing
     data = json.loads(request.body)
@@ -185,10 +185,37 @@ def edit(request):
 
     # Make sure the user is actually the post's author
     if request.user != post.author:
-        return JsonResponse({"error": "You can't edit someone else's post!"})
+        return JsonResponse({"error": "You can't edit someone else's post!"}, status=400)
 
     # Update post and send it back to the client
     post.body = data["body"]
     post.save()
 
-    return JsonResponse({"body": post.body})
+    return JsonResponse({"body": post.body},status=204)
+
+
+@csrf_exempt
+@login_required
+def like(request):
+    # API for liking a post
+
+    # Check method and that user is logged in
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT method required"},status=400)
+    
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "User must be logged in."},status=400)
+    
+    data = json.loads(request.body)
+    post = Post.posts.get(pk=data["post"])
+
+    if data["action"] == "like":
+        post.likes.add(request.user)
+    elif data["action"] == "unlike":
+        post.likes.remove(request.user)
+    else:
+        return JsonResponse({"error": "Invalid action."},status=400)
+    
+    post.save()
+
+    return JsonResponse({"likes": post.likes.count()})
