@@ -1,10 +1,10 @@
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef
 from .models import User, Post
 from django.core.paginator import Paginator
 
-def get_posts(username=False,users=False,per_page=10):
+def get_posts(request,username=False,users=False,per_page=10):
     """Function to retrieve posts from the database and annotate the number of likes.
-    Returns a Paginator object.
+    Also annotates if the current user liked the post. Returns a Paginator object.
 
     Parameters:
     username (str) - Use to retrieve only posts from a specific user (optional)
@@ -19,6 +19,8 @@ def get_posts(username=False,users=False,per_page=10):
         posts = Post.posts.filter(author__id__in=users)
     else:
         posts = Post.posts.all()
+    if request.user.is_authenticated:
+        posts = posts.annotate(liked=Exists(request.user.liked.filter(id=OuterRef('pk'))))
     return Paginator(posts.annotate(num_likes=Count('likes')).order_by('-timestamp'), per_page)
 
 def get_page_number(request, default=1):

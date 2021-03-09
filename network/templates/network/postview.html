@@ -64,6 +64,9 @@
                 </button>
                 <span id="#post-{{ post.id }}-num-likes">{{ post.num_likes }}</span>
             </div>
+            {% if post.liked %}
+            <span>You liked this post!</span>
+            {% endif %}
         </div>
         {% endfor %}
     </div>

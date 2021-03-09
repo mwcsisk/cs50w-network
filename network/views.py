@@ -14,7 +14,7 @@ from .functions import get_posts, get_page_number
 # Page views
 
 def index(request):
-    posts = get_posts()
+    posts = get_posts(request)
     page_no = get_page_number(request)
 
     return render(request, "network/index.html", {
@@ -24,7 +24,7 @@ def index(request):
 
 @login_required
 def following(request):
-    posts = get_posts(users=request.user.following.all().values('id'))
+    posts = get_posts(request, users=request.user.following.all().values('id'))
     page_no = get_page_number(request)
 
     return render(request, "network/following.html", {
@@ -92,7 +92,7 @@ def profile(request, username):
     else:
         is_following = False
     
-    posts = get_posts(username=username)
+    posts = get_posts(request, username=username)
     page_no = get_page_number(request)
 
     return render(request, "network/profile.html", {
