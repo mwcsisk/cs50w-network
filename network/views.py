@@ -172,18 +172,22 @@ def follow(request):
 def edit(request):
     # API for editing a post
 
+    # Check method and that user is logged in
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"})
 
     if not request.user.is_authenticated:
         return JsonResponse({"error": "User must be logged in."})
     
+    # Get the post we're editing
     data = json.loads(request.body)
     post = Post.posts.get(id=data["post"])
 
+    # Make sure the user is actually the post's author
     if request.user != post.author:
         return JsonResponse({"error": "You can't edit someone else's post!"})
 
+    # Update post and send it back to the client
     post.body = data["body"]
     post.save()
 

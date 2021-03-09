@@ -50,12 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     };
 
+    // Follow button functionality
+
     let followButton = document.querySelector('#follow-button')
 
     if (followButton) {
-        followerCount = document.querySelector('#follower-count');
+        // Grab the current follower count
+        let followerCount = document.querySelector('#follower-count');
 
         followButton.onclick = () => {
+            // We use the inner HTML of the button to know which action to take
             if (followButton.innerHTML.trim() === 'Follow') {
                 updateFollowing('follow', followButton.value)
                 .then(() => {
@@ -74,7 +78,9 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     };
 
-    let editButtons = document.querySelectorAll('.edit-button')
+    // Editing functionality
+
+    let editButtons = document.querySelectorAll('.edit-button')   // Grab all the edit buttons
 
     if (editButtons) {
         editButtons.forEach(element => {
@@ -130,12 +136,16 @@ async function updateFollowing(action, followee) {
 function newEditForm(postId, postBody) {
     // Function to generate HTML for an edit form
     form = document.createElement('form');
+
+    // Form HTML, this was an easier way for me to get my head around this
     form.innerHTML = `
     <div class="form-group">
         <textarea id="post-${postId}-edit-body" class="form-control" rows="3">${postBody}</textarea>
         <div id="post-${postId}-edit-feedback" class="invalid-feedback"></div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>`;
+
+    // Send our edits to server without reloading the page
     form.onsubmit = () => {
         const newPostBody = document.querySelector(`#post-${postId}-edit-body`)
         fetch(`/api/post/edit`, {
