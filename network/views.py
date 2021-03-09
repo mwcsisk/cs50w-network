@@ -80,7 +80,8 @@ def profile(request, username):
         "username": username,
         "following": user.following.count(),
         "followers": user.followers.count(),
-        "posts": get_posts(username=username)
+        "posts": get_posts(username=username),
+        "is_following": True if user in request.user.following.all() else False
     })
 
 

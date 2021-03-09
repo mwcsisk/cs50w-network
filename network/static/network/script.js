@@ -1,50 +1,78 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // Add post functionality
-    document.querySelector('#new-post').onsubmit = () => {
+    newPostButton = document.querySelector('#new-post')
 
-        // Set up elements we need
-        const body = document.getElementById('new-post-body');
-        const message = document.getElementById('new-post-feedback');
-        const form = document.getElementById('new-post');
-        
-        // Add post to database
-        fetch('/api/post', {
-            method: 'POST',
-            body: JSON.stringify({
-                body: body.value
+    if (newPostButton) {
+        newPostButton.onsubmit = () => {
+
+            // Set up elements we need
+            const body = document.getElementById('new-post-body');
+            const message = document.getElementById('new-post-feedback');
+            const form = document.getElementById('new-post');
+            
+            // Add post to database
+            fetch('/api/post', {
+                method: 'POST',
+                body: JSON.stringify({
+                    body: body.value
+                })
             })
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log(result);
-            
-            // Check for errors
-            if (result.error) {
-                body.classList.add('is-invalid');
+            .then(response => response.json())
+            .then(result => {
+                console.log(result);
                 
-                message.className = 'invalid-feedback';
-                message.innerHTML = result.error;
+                // Check for errors
+                if (result.error) {
+                    body.classList.add('is-invalid');
+                    
+                    message.className = 'invalid-feedback';
+                    message.innerHTML = result.error;
+                    
+                    return false;
+                }
                 
-                return false;
-            }
-            
-            form.classList.add('was-validated');
-            // Display success message to user
-            body.classList.remove('is-invalid');
-            body.classList.add('is-valid');
-            message.className='valid-feedback';
-            message.innerHTML = 'Post successfully created!';
+                form.classList.add('was-validated');
+                // Display success message to user
+                body.classList.remove('is-invalid');
+                body.classList.add('is-valid');
+                message.className='valid-feedback';
+                message.innerHTML = 'Post successfully created!';
 
-            // Add new post to posts view
-            renderPost('afterbegin', result);
+                // Add new post to posts view
+                renderPost('afterbegin', result);
 
-            // Clear post form body
-            document.getElementById('new-post-body').value = '';
-        })
+                // Clear post form body
+                document.getElementById('new-post-body').value = '';
+            });
 
-        return false;
-    }
+            return false;
+        };
+    };
+
+    followButton = document.querySelector('#follow-button')
+
+    if (followButton) {
+        followerCount = document.querySelector('#follower-count');
+
+        followButton.onclick = () => {
+            if (followButton.innerHTML.trim() === 'Follow') {
+                updateFollowing('follow', followButton.value)
+                .then(() => {
+                    followButton.innerHTML = 'Unfollow';
+                    newCount = parseInt(followerCount.innerHTML) + 1;
+                    followerCount.innerHTML = newCount;
+                });
+            } else {
+                updateFollowing('unfollow', followButton.value)
+                .then(() => {
+                    followButton.innerHTML = 'Follow'
+                    newCount = parseInt(followerCount.innerHTML) - 1;
+                    followerCount.innerHTML = newCount;
+                });
+            };
+        };
+    };
 });
 
 function renderPost(position, postData) {
@@ -73,14 +101,14 @@ function renderPost(position, postData) {
     view.insertAdjacentElement(position, newPost);
 }
 
-function updateFollowing(action, followee) {
+async function updateFollowing(action, followee) {
     // Function to update the "following" status for a user
     // Takes an action (either 'follow' or 'unfollow') and the username being followed/unfollowed
-    fetch('/api/follow', {
+    await fetch('/api/follow', {
         method: 'PUT',
         body: JSON.stringify({
             action: action,
             followee: followee
         })
-    })
+    });
 }
