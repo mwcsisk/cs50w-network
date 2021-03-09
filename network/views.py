@@ -24,6 +24,8 @@ def index(request):
 
 @login_required
 def following(request):
+    if not request.user.following.all():
+        return render(request, "network/not_following.html")
     posts = get_posts(request, users=request.user.following.all().values('id'))
     page_no = get_page_number(request)
 
