@@ -75,13 +75,17 @@ def register(request):
 def profile(request, username):
     # Render a given user profile
     user = User.objects.get(username=username)
+    if request.user.is_authenticated:
+        is_following = request.user.following.filter(id=user.id).exists()
+    else:
+        is_following = False
 
     return render(request, "network/profile.html", {
         "username": username,
         "following": user.following.count(),
         "followers": user.followers.count(),
         "posts": get_posts(username=username),
-        "is_following": True if user in request.user.following.all() else False
+        "is_following": is_following
     })
 
 

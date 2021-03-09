@@ -4,7 +4,7 @@
 <h1>{{ username }}'s Profile</h1>
 <h3>{{ following }} following</h3>
 <h3><span id="follower-count">{{ followers }}</span> followers</h3>
-{% if request.user.username != username %}
+{% if request.user.username != username and request.user.is_authenticated %}
 <button type="button" class="btn btn-primary" id="follow-button" value="{{ username }}">
     {% if is_following %}
         Unfollow
