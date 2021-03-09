@@ -59,7 +59,7 @@
     <nav aria-label="Post navigation">
         <ul class="pagination">
             {% if posts.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page=1" aria-label="Previous">
+            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
             </a></li>
             {% else %}
