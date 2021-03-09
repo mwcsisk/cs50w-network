@@ -21,6 +21,15 @@ def index(request):
     })
 
 
+@login_required
+def following(request):
+    posts = get_posts(users=request.user.following.all().values('id'))
+
+    return render(request, "network/following.html", {
+        "posts": posts
+    })
+
+
 def login_view(request):
     if request.method == "POST":
 
