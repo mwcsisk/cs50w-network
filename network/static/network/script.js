@@ -133,6 +133,7 @@ function newEditForm(postId, postBody) {
     form.innerHTML = `
     <div class="form-group">
         <textarea id="post-${postId}-edit-body" class="form-control" rows="3">${postBody}</textarea>
+        <div id="post-${postId}-edit-feedback" class="invalid-feedback"></div>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>`;
     form.onsubmit = () => {
@@ -148,14 +149,15 @@ function newEditForm(postId, postBody) {
         .then(result => {
             if (result.error) {
                 console.log(result.error)
+                document.querySelector(`#post-${postId}-edit-feedback`).innerHTML = result.error;
 
                 return false;
             }
             document.querySelector(`#post-${postId}-body`).innerHTML = result.body;
             document.querySelector(`#post-${postId}-edit-button`).disabled = false;
+            alert("Post successfully edited!");
+        });
 
-        })
-        
         return false;
     }
     return form;
