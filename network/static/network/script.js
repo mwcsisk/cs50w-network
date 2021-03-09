@@ -110,8 +110,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     action = 'unlike'
                 }
 
-                console.log(action)
-
                 fetch('/api/like', {
                     method: "PUT",
                     body: JSON.stringify({

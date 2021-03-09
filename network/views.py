@@ -191,7 +191,7 @@ def edit(request):
     post.body = data["body"]
     post.save()
 
-    return JsonResponse({"body": post.body},status=204)
+    return JsonResponse({"body": post.body})
 
 
 @csrf_exempt
